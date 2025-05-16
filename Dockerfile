@@ -10,14 +10,14 @@ WORKDIR /app
 COPY package*.json ./
 COPY pnpm-lock.yaml ./
 
-# Install dependencies using pnpm (adjust if using npm/yarn)
-RUN npm install -g pnpm && pnpm install
+# Install dependencies using npm
+RUN npm install
 
 # Copy all files
 COPY . .
 
 # Build the application
-RUN pnpm run build
+RUN npm run build
 
 # Stage 2: Production image
 FROM node:18-alpine AS runner
@@ -32,13 +32,13 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 
 # Install production dependencies
-RUN npm install -g pnpm && pnpm install --prod
+RUN npm install --production
 
 # Expose the port the app runs on
 EXPOSE 3000
 
 # Command to run the application
-CMD ["pnpm", "start"]
+CMD ["npm", "start"]
 
 # How to use this Dockerfile:
 # 1. Build the image: docker build -t person-management .
